@@ -226,7 +226,10 @@ async function run(input) {
   const { y, m, d, iso, index } = dayIndex(tz);
 
   const pool = buildPool(gens);
-  const dex = pool[(index * stride(pool.length)) % pool.length];
+  const n = pool.length;
+  let pick = (index * stride(n)) % n;
+  if (!Number.isFinite(pick) || pick < 0) pick = 0;
+  const dex = pool[pick];
 
   const [mon, species] = await Promise.all([
     json(`${API}/pokemon/${dex}`, 3000),
