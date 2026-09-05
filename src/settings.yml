@@ -65,6 +65,6 @@ custom_fields:
   name: Time Zone
   description: When the Pokemon of the day rolls over.
   help_text: Defaults to your TRMNL account time zone.
-name: Dagelijkse Pokemon
+name: Daily Pokemon
 description: Shows a random daily pokemon
 refresh_interval: 60
