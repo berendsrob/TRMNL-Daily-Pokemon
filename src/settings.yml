@@ -6,7 +6,7 @@ static_data: ''
 polling_verb: get
 framework_version: 3.3.1
 serverless_language: node
-polling_url: https://pokeapi.co/api/v2/pokemon/1
+polling_url: "https://pokeapi.co/api/v2/pokemon?limit=1\r\n"
 polling_headers: ''
 polling_body: ''
 id: 468586
