@@ -6,34 +6,34 @@
 <div class="view view--full">
   <div class="layout">
 
-    <div class="flex flex--row gap--xlarge" style="height:100%; align-items:center;">
+    <div class="flex flex--row gap--large" style="height:100%; align-items:center;">
 
       <!-- Artwork -->
-      <div style="flex:0 0 38%; display:flex; flex-direction:column; align-items:center; gap:6px;">
+      <div style="flex:0 0 50%; display:flex; flex-direction:column; align-items:center; gap:4px;">
         <img class="image"
              src="{{ artwork }}"
              style="width:100%; aspect-ratio:1/1; object-fit:contain;" />
-        <span class="label label--small text--gray-40">{{ t.number }} {{ dex_padded }}</span>
+        <span class="text--gray-40" style="font-size:0.7rem;">{{ t.number }} {{ dex_padded }}</span>
       </div>
 
       <!-- Details -->
       <div style="flex:1 1 auto; min-width:0;">
 
-        <span class="value value--xxlarge" style="display:block; line-height:1.05;">
+        <span class="value value--large" style="display:block; line-height:1.05;">
           {{ name }}
         </span>
 
-        <span class="label label--small text--gray-40" style="display:block; margin-top:4px;">
+        <span class="text--gray-40" style="display:block; margin-top:2px; font-size:0.7rem;">
           {{ genus }} &middot; {{ generation_label }}{% if is_legendary %} &middot; {{ t.legendary }}{% endif %}{% if is_mythical %} &middot; {{ t.mythical }}{% endif %}
         </span>
 
         <!-- Types -->
-        <div class="flex flex--row gap--small" style="margin:18px 0;">
-          <span class="bg--gray-75 text--white rounded" style="padding:3px 16px; font-weight:700; letter-spacing:.06em;">
+        <div class="flex flex--row gap--small" style="margin:12px 0;">
+          <span class="outline" style="padding:2px 12px; font-weight:700; font-size:0.85rem;">
             {{ type_1 | upcase }}
           </span>
           {% if type_2 != "" %}
-          <span class="bg--gray-30 rounded" style="padding:3px 16px; font-weight:700; letter-spacing:.06em;">
+          <span class="outline" style="padding:2px 12px; font-weight:700; font-size:0.85rem;">
             {{ type_2 | upcase }}
           </span>
           {% endif %}
@@ -42,28 +42,24 @@
         <div class="border--h-25" style="height:2px;"></div>
 
         <!-- Metrics -->
-        <div class="flex flex--row gap--xlarge" style="margin-top:16px;">
+        <div class="flex flex--row gap--large" style="margin-top:10px;">
           <div>
-            <span class="label label--small text--gray-40" style="display:block;">{{ t.height }}</span>
-            <span class="value value--large">{{ height_m }} m</span>
+            <span class="text--gray-40" style="display:block; font-size:0.65rem;">{{ t.height }}</span>
+            <span style="font-size:1rem; font-weight:700;">{{ height_m }} m</span>
           </div>
           <div>
-            <span class="label label--small text--gray-40" style="display:block;">{{ t.weight }}</span>
-            <span class="value value--large">{{ weight_kg }} kg</span>
-          </div>
-          <div>
-            <span class="label label--small text--gray-40" style="display:block;">{{ t.region }}</span>
-            <span class="value value--large">{{ region }}</span>
+            <span class="text--gray-40" style="display:block; font-size:0.65rem;">{{ t.weight }}</span>
+            <span style="font-size:1rem; font-weight:700;">{{ weight_kg }} kg</span>
           </div>
         </div>
 
         <!-- Evolution chain -->
         {% if has_evolution %}
-        <div style="margin-top:18px;">
-          <span class="label label--small text--gray-40" style="display:block; margin-bottom:4px;">
+        <div style="margin-top:12px;">
+          <span class="text--gray-40" style="display:block; margin-bottom:2px; font-size:0.65rem;">
             {{ t.evolution }}
           </span>
-          <div class="flex flex--row gap--small" style="align-items:center; flex-wrap:wrap;">
+          <div class="flex flex--row gap--small" style="align-items:center; flex-wrap:wrap; font-size:0.8rem;">
             {% for stage in stages %}
               {% if forloop.index0 > 0 %}
                 <span class="text--gray-40">&rarr;</span>
