@@ -17,6 +17,7 @@ const GENERATIONS = {
 const ALL = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const API = "https://pokeapi.co/api/v2";
 const ART = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork";
+const SPRITE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon";
 const FALLBACK_TZ = "Europe/Amsterdam";
 
 // --- i18n -------------------------------------------------------------------
@@ -213,6 +214,12 @@ async function json(url, ms) {
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 function pretty(slug) { return slug.split("-").map(cap).join(" "); }
 
+// Chain nodes carry .../pokemon-species/25/ — the id is free, no extra fetch.
+function speciesId(url) {
+  const m = String(url).match(/\/pokemon-species\/(\d+)\/?$/);
+  return m ? Number(m[1]) : 0;
+}
+
 // PokeAPI flavor text carries hard line breaks, form feeds and soft hyphens
 // from the original cartridge layouts. Strip them or the screen shows gaps.
 function clean(s) {
@@ -241,16 +248,26 @@ function newestFlavor(entries, apiLang) {
 // Flatten the evolution tree into ordered stages. Branching lines
 // (Eevee, Wurmple) put every sibling in the same stage.
 function flattenChain(root, currentSlug) {
-  const stages = [];
+  const levels = [];
   let level = [root];
   while (level.length) {
-    stages.push(level.map((n) => n.species.name));
+    levels.push(level.map((n) => {
+      const id = speciesId(n.species.url);
+      return {
+        slug: n.species.name,
+        name: pretty(n.species.name),
+        id,
+        sprite: id ? `${SPRITE}/${id}.png` : "",
+        current: n.species.name === currentSlug,
+      };
+    }));
     level = level.flatMap((n) => n.evolves_to);
   }
-  return stages.map((slugs) => ({
-    label: slugs.map(pretty).join(" / "),
-    current: slugs.includes(currentSlug),
-    count: slugs.length,
+  return levels.map((members) => ({
+    members,
+    label: members.map((m) => m.name).join(" / "),
+    current: members.some((m) => m.current),
+    count: members.length,
   }));
 }
 
