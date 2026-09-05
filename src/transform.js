@@ -133,13 +133,31 @@ function timeZone(input) {
 // --- deterministic daily pick -----------------------------------------------
 
 function dayIndex(tz) {
-  let iso;
+  const opts = { year: "numeric", month: "2-digit", day: "2-digit" };
+  let parts;
   try {
-    iso = new Date().toLocaleDateString("en-CA", { timeZone: tz });
+    parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, ...opts })
+      .formatToParts(new Date());
   } catch (_) {
-    iso = new Date().toLocaleDateString("en-CA", { timeZone: FALLBACK_TZ });
+    try {
+      parts = new Intl.DateTimeFormat("en-US", { timeZone: FALLBACK_TZ, ...opts })
+        .formatToParts(new Date());
+    } catch (_) {
+      parts = null;
+    }
   }
-  const [y, m, d] = iso.split("-").map(Number);
+
+  let y, m, d;
+  if (parts) {
+    const get = (type) => Number((parts.find((p) => p.type === type) || {}).value);
+    y = get("year"); m = get("month"); d = get("day");
+  }
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) {
+    const now = new Date();                    // last resort: UTC
+    y = now.getUTCFullYear(); m = now.getUTCMonth() + 1; d = now.getUTCDate();
+  }
+
+  const iso = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
   return { y, m, d, iso, index: Math.floor(Date.UTC(y, m - 1, d) / 86400000) };
 }
 
