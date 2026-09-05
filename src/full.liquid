@@ -66,8 +66,8 @@
           {% for stat in stats %}
           <div style="display:flex; align-items:center; gap:9px;">
             <span class="text--gray-40" style="flex:0 0 70px; font-size:0.80rem;">{{ stat.label }}</span>
-            <div class="bg--gray-70 rounded" style="flex:1 1 auto; height:11px; overflow:hidden;">
-              <div class="bg--white" style="width:{{ stat.pct }}%; height:100%;"></div>
+            <div class="bg--white rounded" style="flex:1 1 auto; height:11px; overflow:hidden;">
+              <div class="bg--gray-70" style="width:{{ stat.pct }}%; height:100%;"></div>
             </div>
             <span style="flex:0 0 34px; text-align:right; font-size:0.86rem; font-weight:700;">{{ stat.value }}</span>
           </div>
@@ -90,25 +90,25 @@
           <span class="text--gray-40" style="display:block; margin-bottom:5px; font-size:0.76rem;">
             {{ t.evolution }}
           </span>
-          <div style="display:flex; align-items:flex-start; gap:7px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:flex-start; gap:9px; flex-wrap:wrap;">
             {% for stage in stages %}
               {% if forloop.index0 > 0 %}
-                <span class="text--gray-40" style="align-self:center; font-size:1rem;">&rarr;</span>
+                <span class="text--gray-40" style="align-self:center; font-size:1.3rem;">&rarr;</span>
               {% endif %}
               {% if stage.count > 3 %}
-                <span class="text--gray-40" style="align-self:center; font-size:0.83rem;">
+                <span class="text--gray-40" style="align-self:center; font-size:0.95rem;">
                   {{ stage.count }}&times;
                 </span>
               {% else %}
-              <div style="display:flex; gap:5px;">
+              <div style="display:flex; gap:8px;">
                 {% for m in stage.members %}
-                <div style="display:flex; flex-direction:column; align-items:center; width:50px;">
+                <div style="display:flex; flex-direction:column; align-items:center; width:92px;">
                   {% if m.sprite != "" %}
                   <img class="image" src="{{ m.sprite }}"
-                       style="width:42px; height:42px; object-fit:contain;
+                       style="width:84px; height:84px; object-fit:contain;
                               {% unless m.current %}opacity:0.55;{% endunless %}" />
                   {% endif %}
-                  <span style="font-size:0.68rem; line-height:1.15; text-align:center;
+                  <span style="font-size:0.88rem; line-height:1.15; text-align:center;
                                {% if m.current %}font-weight:700;{% else %}opacity:0.7;{% endif %}">
                     {{ m.name }}
                   </span>
