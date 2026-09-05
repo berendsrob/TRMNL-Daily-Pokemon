@@ -21,11 +21,12 @@ const FALLBACK_TZ = "Europe/Amsterdam";
 
 // --- i18n -------------------------------------------------------------------
 //
-// api: PokeAPI language code used for the genus line. PokeAPI has no Dutch,
-//      so nl falls back to English there.
+// api: PokeAPI language code used for the genus and flavor lines. PokeAPI has
+//      no Dutch, so nl falls back to English there.
 // Month names are hardcoded rather than using toLocaleDateString, because a
 // slim Node image may ship small-icu (English locale data only) and would
-// silently return English month names for es/fr/nl.
+// silently return English month names for es/fr/nl. The same small-icu
+// behaviour is why dayIndex() uses formatToParts instead of parsing a string.
 
 const I18N = {
   en: {
@@ -34,7 +35,9 @@ const I18N = {
     number: "No.",
     height: "Height",
     weight: "Weight",
-    region: "Region",
+    total: "Total",
+    abilities: "Abilities",
+    hidden: "hidden",
     evolution: "Evolution chain",
     legendary: "Legendary",
     mythical: "Mythical",
@@ -46,7 +49,9 @@ const I18N = {
     number: "N.º",
     height: "Altura",
     weight: "Peso",
-    region: "Región",
+    total: "Total",
+    abilities: "Habilidades",
+    hidden: "oculta",
     evolution: "Cadena evolutiva",
     legendary: "Legendario",
     mythical: "Singular",
@@ -58,7 +63,9 @@ const I18N = {
     number: "Nº",
     height: "Taille",
     weight: "Poids",
-    region: "Région",
+    total: "Total",
+    abilities: "Talents",
+    hidden: "caché",
     evolution: "Chaîne d'évolution",
     legendary: "Légendaire",
     mythical: "Fabuleux",
@@ -70,7 +77,9 @@ const I18N = {
     number: "Nr.",
     height: "Lengte",
     weight: "Gewicht",
-    region: "Regio",
+    total: "Totaal",
+    abilities: "Vaardigheden",
+    hidden: "verborgen",
     evolution: "Evolutielijn",
     legendary: "Legendarisch",
     mythical: "Mythisch",
@@ -102,183 +111,8 @@ const TYPES = {
   fairy:    { en: "Fairy",    es: "Hada",       fr: "Fée",      nl: "Fee"        },
 };
 
-// --- config -----------------------------------------------------------------
-
-function fields(input) {
-  return (input && input.trmnl && input.trmnl.plugin_settings
-    && input.trmnl.plugin_settings.custom_fields_values) || {};
-}
-
-function language(input) {
-  const raw = String(fields(input).language || "en").toLowerCase().trim();
-  return I18N[raw] ? raw : "en";
-}
-
-// Empty / unset means the full National Dex.
-function selectedGens(input) {
-  let raw = fields(input).generations;
-  if (raw === undefined || raw === null || raw === "") return ALL;
-  if (!Array.isArray(raw)) raw = String(raw).split(",");
-  const gens = [...new Set(
-    raw.map((v) => parseInt(String(v).trim(), 10)).filter((n) => GENERATIONS[n])
-  )].sort((a, b) => a - b);
-  return gens.length ? gens : ALL;
-}
-
-function timeZone(input) {
-  const user = (input && input.trmnl && input.trmnl.user) || {};
-  return fields(input).time_zone || user.time_zone || FALLBACK_TZ;
-}
-
-// --- deterministic daily pick -----------------------------------------------
-
-function dayIndex(tz) {
-  const opts = { year: "numeric", month: "2-digit", day: "2-digit" };
-  let parts;
-  try {
-    parts = new Intl.DateTimeFormat("en-US", { timeZone: tz, ...opts })
-      .formatToParts(new Date());
-  } catch (_) {
-    try {
-      parts = new Intl.DateTimeFormat("en-US", { timeZone: FALLBACK_TZ, ...opts })
-        .formatToParts(new Date());
-    } catch (_) {
-      parts = null;
-    }
-  }
-
-  let y, m, d;
-  if (parts) {
-    const get = (type) => Number((parts.find((p) => p.type === type) || {}).value);
-    y = get("year"); m = get("month"); d = get("day");
-  }
-  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) {
-    const now = new Date();                    // last resort: UTC
-    y = now.getUTCFullYear(); m = now.getUTCMonth() + 1; d = now.getUTCDate();
-  }
-
-  const iso = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-  return { y, m, d, iso, index: Math.floor(Date.UTC(y, m - 1, d) / 86400000) };
-}
-
-function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
-
-// A stride coprime with the pool size walks every entry exactly once
-// before repeating. ~0.618 spreads consecutive days far apart.
-function stride(n) {
-  if (n < 3) return 1;
-  let s = Math.max(1, Math.round(n * 0.6180339887));
-  while (gcd(s, n) !== 1) s = (s % n) + 1;
-  return s;
-}
-
-function buildPool(gens) {
-  const pool = [];
-  for (const g of gens) {
-    const { from, to } = GENERATIONS[g];
-    for (let i = from; i <= to; i++) pool.push(i);
-  }
-  return pool;
-}
-
-// --- data -------------------------------------------------------------------
-
-async function json(url, ms) {
-  const res = await fetch(url, { signal: AbortSignal.timeout(ms) });
-  if (!res.ok) throw new Error(`${res.status} ${url}`);
-  return res.json();
-}
-
-function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-function pretty(slug) { return slug.split("-").map(cap).join(" "); }
-
-// Pick a localized entry, falling back to English then to blank.
-function localized(list, key, apiLang) {
-  const arr = list || [];
-  const hit = arr.find((e) => e.language.name === apiLang)
-           || arr.find((e) => e.language.name === "en");
-  return hit ? hit[key].replace(/\s+/g, " ").trim() : "";
-}
-
-// Flatten the evolution tree into ordered stages. Branching lines
-// (Eevee, Wurmple) put every sibling in the same stage.
-function flattenChain(root, currentSlug) {
-  const stages = [];
-  let level = [root];
-  while (level.length) {
-    stages.push(level.map((n) => n.species.name));
-    level = level.flatMap((n) => n.evolves_to);
-  }
-  return stages.map((slugs) => ({
-    label: slugs.map(pretty).join(" / "),
-    current: slugs.includes(currentSlug),
-    count: slugs.length,
-  }));
-}
-
-// --- entrypoint -------------------------------------------------------------
-
-async function run(input) {
-  const lang = language(input);
-  const t = I18N[lang];
-  const gens = selectedGens(input);
-  const tz = timeZone(input);
-  const { y, m, d, iso, index } = dayIndex(tz);
-
-  const pool = buildPool(gens);
-  const n = pool.length;
-  let pick = (index * stride(n)) % n;
-  if (!Number.isFinite(pick) || pick < 0) pick = 0;
-  const dex = pool[pick];
-
-  const [mon, species] = await Promise.all([
-    json(`${API}/pokemon/${dex}`, 3000),
-    json(`${API}/pokemon-species/${dex}`, 3000),
-  ]);
-
-  // Non-fatal: a missing chain just hides the evolution row.
-  let stages = [];
-  try {
-    const chain = await json(species.evolution_chain.url, 2000);
-    stages = flattenChain(chain.chain, species.name);
-  } catch (_) { /* leave blank */ }
-
-  const types = mon.types
-    .sort((a, b) => a.slot - b.slot)
-    .map((x) => (TYPES[x.type.name] && TYPES[x.type.name][lang]) || cap(x.type.name));
-
-  const roman = { i: 1, ii: 2, iii: 3, iv: 4, v: 5, vi: 6, vii: 7, viii: 8, ix: 9 };
-  const genNum = roman[species.generation.name.replace("generation-", "")] || 0;
-  const meta = GENERATIONS[genNum] || {};
-
-  return {
-    // chrome, translated
-    t,
-    lang,
-    date: `${d} ${t.months[m - 1]} ${y}`,
-    date_iso: iso,
-    time_zone: tz,
-    // subject — name stays canonical, genus follows the language where available
-    dex,
-    dex_padded: String(dex).padStart(4, "0"),
-    name: localized(species.names, "name", "en") || pretty(mon.name),
-    genus: localized(species.genera, "genus", t.api),
-    genus_is_english: t.api === "en" && lang !== "en",
-    artwork: `${ART}/${dex}.png`,
-    types: types.join(" / "),
-    type_1: types[0] || "",
-    type_2: types[1] || "",
-    height_m: (mon.height / 10).toFixed(1),
-    weight_kg: (mon.weight / 10).toFixed(1),
-    region: meta.region || "",
-    generation_label: meta.region ? `Gen ${genNum} · ${meta.region}` : `Gen ${genNum}`,
-    is_legendary: species.is_legendary,
-    is_mythical: species.is_mythical,
-    // evolution chain
-    stages,
-    has_evolution: stages.length > 1,
-    // diagnostics
-    pool_size: pool.length,
-    generations_active: gens.join(","),
-  };
-}
+// Base stat labels, kept short so the bar rows stay narrow.
+const STAT_KEYS = ["hp", "attack", "defense", "special-attack", "special-defense", "speed"];
+const STAT_LABELS = {
+  "hp":              { en: "HP",      es: "PS",       fr: "PV",       nl: "HP"       },
+  "attack":          { en: "Attack",  es: "Ataque",   fr: "Attaque",  nl: "Aanval"   },
