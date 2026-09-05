@@ -67,4 +67,4 @@ custom_fields:
   help_text: Defaults to your TRMNL account time zone.
 name: Daily Pokemon
 description: Shows a random daily pokemon
-refresh_interval: 1440
+refresh_interval: 60
