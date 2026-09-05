@@ -1,0 +1,89 @@
+{% comment %}
+  Pokemon of the Day - Full layout, tuned for TRMNL X (4-bit greyscale).
+  All chrome text comes from {{ t.* }}, set by the Language form field.
+{% endcomment %}
+
+<div class="view view--full">
+  <div class="layout">
+
+    <div class="flex flex--row gap--xlarge" style="height:100%; align-items:center;">
+
+      <!-- Artwork -->
+      <div style="flex:0 0 38%; display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <img class="image"
+             src="{{ artwork }}"
+             style="width:100%; aspect-ratio:1/1; object-fit:contain;" />
+        <span class="label label--small text--gray-40">{{ t.number }} {{ dex_padded }}</span>
+      </div>
+
+      <!-- Details -->
+      <div style="flex:1 1 auto; min-width:0;">
+
+        <span class="value value--xxlarge" style="display:block; line-height:1.05;">
+          {{ name }}
+        </span>
+
+        <span class="label label--small text--gray-40" style="display:block; margin-top:4px;">
+          {{ genus }} &middot; {{ generation_label }}{% if is_legendary %} &middot; {{ t.legendary }}{% endif %}{% if is_mythical %} &middot; {{ t.mythical }}{% endif %}
+        </span>
+
+        <!-- Types -->
+        <div class="flex flex--row gap--small" style="margin:18px 0;">
+          <span class="bg--gray-75 text--white rounded" style="padding:3px 16px; font-weight:700; letter-spacing:.06em;">
+            {{ type_1 | upcase }}
+          </span>
+          {% if type_2 != "" %}
+          <span class="bg--gray-30 rounded" style="padding:3px 16px; font-weight:700; letter-spacing:.06em;">
+            {{ type_2 | upcase }}
+          </span>
+          {% endif %}
+        </div>
+
+        <div class="border--h-25" style="height:2px;"></div>
+
+        <!-- Metrics -->
+        <div class="flex flex--row gap--xlarge" style="margin-top:16px;">
+          <div>
+            <span class="label label--small text--gray-40" style="display:block;">{{ t.height }}</span>
+            <span class="value value--large">{{ height_m }} m</span>
+          </div>
+          <div>
+            <span class="label label--small text--gray-40" style="display:block;">{{ t.weight }}</span>
+            <span class="value value--large">{{ weight_kg }} kg</span>
+          </div>
+          <div>
+            <span class="label label--small text--gray-40" style="display:block;">{{ t.region }}</span>
+            <span class="value value--large">{{ region }}</span>
+          </div>
+        </div>
+
+        <!-- Evolution chain -->
+        {% if has_evolution %}
+        <div style="margin-top:18px;">
+          <span class="label label--small text--gray-40" style="display:block; margin-bottom:4px;">
+            {{ t.evolution }}
+          </span>
+          <div class="flex flex--row gap--small" style="align-items:center; flex-wrap:wrap;">
+            {% for stage in stages %}
+              {% if forloop.index0 > 0 %}
+                <span class="text--gray-40">&rarr;</span>
+              {% endif %}
+              {% if stage.current %}
+                <span style="font-weight:700;">{{ stage.label }}</span>
+              {% else %}
+                <span class="text--gray-40">{{ stage.label }}</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+
+  <div class="title_bar">
+    <span class="title">{{ t.title }}</span>
+    <span class="instance">{{ date }}</span>
+  </div>
+</div>
