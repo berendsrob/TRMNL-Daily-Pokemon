@@ -50,26 +50,25 @@
         <div class="border--h-25" style="height:2px; margin-top:16px;"></div>
 
         <!-- Height / weight -->
-        <div class="flex flex--row" style="margin-top:14px; gap:36px;">
+        <div class="flex flex--row" style="margin-top:16px; gap:46px;">
           <div>
-            <span class="text--gray-40" style="display:block; font-size:0.76rem;">{{ t.height }}</span>
-            <span style="font-size:1.5rem; font-weight:700; line-height:1;">{{ height_m }}<span style="font-size:0.88rem;"> m</span></span>
+            <span class="text--gray-40" style="display:block; font-size:1rem;">{{ t.height }}</span>
+            <span style="font-size:3rem; font-weight:700; line-height:1;">{{ height_m }}<span style="font-size:1.5rem;"> m</span></span>
           </div>
           <div>
-            <span class="text--gray-40" style="display:block; font-size:0.76rem;">{{ t.weight }}</span>
-            <span style="font-size:1.5rem; font-weight:700; line-height:1;">{{ weight_kg }}<span style="font-size:0.88rem;"> kg</span></span>
+            <span class="text--gray-40" style="display:block; font-size:1rem;">{{ t.weight }}</span>
+            <span style="font-size:3rem; font-weight:700; line-height:1;">{{ weight_kg }}<span style="font-size:1.5rem;"> kg</span></span>
           </div>
         </div>
 
         <!-- Base stats -->
-        <div style="display:flex; flex-direction:column; gap:5px; margin-top:16px;">
+        <div style="display:flex; margin-top:18px; text-align:center;">
           {% for stat in stats %}
-          <div style="display:flex; align-items:center; gap:9px;">
-            <span class="text--gray-40" style="flex:0 0 70px; font-size:0.80rem;">{{ stat.label }}</span>
-            <div class="bg--white rounded" style="flex:1 1 auto; height:11px; overflow:hidden;">
-              <div class="bg--gray-90" style="width:{{ stat.pct }}%; height:100%;"></div>
-            </div>
-            <span style="flex:0 0 34px; text-align:right; font-size:0.86rem; font-weight:700;">{{ stat.value }}</span>
+          <div style="flex:1 1 0; min-width:0;">
+            <span class="text--gray-40" style="display:block; font-size:0.9rem; letter-spacing:.03em;">
+              {{ stat.short }}
+            </span>
+            <span style="font-size:1.7rem; font-weight:700; line-height:1.1;">{{ stat.value }}</span>
           </div>
           {% endfor %}
         </div>

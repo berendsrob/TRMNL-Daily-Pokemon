@@ -112,7 +112,8 @@ const TYPES = {
   fairy:    { en: "Fairy",    es: "Hada",       fr: "Fée",      nl: "Fee"        },
 };
 
-// Base stat labels, kept short so the bar rows stay narrow.
+// Base stat labels. `short` is for the table header, where a column is only
+// wide enough for 2-3 characters.
 const STAT_KEYS = ["hp", "attack", "defense", "special-attack", "special-defense", "speed"];
 const STAT_LABELS = {
   "hp":              { en: "HP",      es: "PS",       fr: "PV",       nl: "HP"       },
@@ -122,7 +123,15 @@ const STAT_LABELS = {
   "special-defense": { en: "Sp. Def", es: "Df. Esp.", fr: "Déf. Spé", nl: "Sp. Verd" },
   "speed":           { en: "Speed",   es: "Velocid.", fr: "Vitesse",  nl: "Snelheid" },
 };
-const STAT_SCALE = 200; // bars saturate here; only a handful of stats exceed it
+const STAT_SHORT = {
+  "hp":              { en: "HP",  es: "PS",  fr: "PV",  nl: "HP"  },
+  "attack":          { en: "ATK", es: "ATQ", fr: "ATQ", nl: "AAN" },
+  "defense":         { en: "DEF", es: "DEF", fr: "DÉF", nl: "VER" },
+  "special-attack":  { en: "SpA", es: "AtE", fr: "AtS", nl: "SpA" },
+  "special-defense": { en: "SpD", es: "DfE", fr: "DéS", nl: "SpV" },
+  "speed":           { en: "SPD", es: "VEL", fr: "VIT", nl: "SNL" },
+};
+const STAT_SCALE = 200; // retained for pct; unused by the table layout
 
 // --- config -----------------------------------------------------------------
 
@@ -312,6 +321,7 @@ async function run(input) {
   for (const s of mon.stats) rawStats[s.stat.name] = s.base_stat;
   const stats = STAT_KEYS.map((k) => ({
     label: (STAT_LABELS[k] && STAT_LABELS[k][lang]) || k,
+    short: (STAT_SHORT[k] && STAT_SHORT[k][lang]) || k,
     value: rawStats[k] || 0,
     pct: Math.min(100, Math.round(((rawStats[k] || 0) / STAT_SCALE) * 100)),
   }));
