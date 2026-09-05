@@ -28,12 +28,12 @@
         </span>
 
         <!-- Types -->
-        <div class="flex flex--row gap--small" style="margin:14px 0 0 0;">
-          <span class="outline" style="padding:3px 13px; font-weight:700; font-size:0.93rem;">
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin:14px 0 0 0;">
+          <span class="outline" style="padding:7px 26px; font-weight:700; font-size:1.35rem;">
             {{ type_1 | upcase }}
           </span>
           {% if type_2 != "" %}
-          <span class="outline" style="padding:3px 13px; font-weight:700; font-size:0.93rem;">
+          <span class="outline" style="padding:7px 26px; font-weight:700; font-size:1.35rem;">
             {{ type_2 | upcase }}
           </span>
           {% endif %}
@@ -67,7 +67,7 @@
           <div style="display:flex; align-items:center; gap:9px;">
             <span class="text--gray-40" style="flex:0 0 70px; font-size:0.80rem;">{{ stat.label }}</span>
             <div class="bg--white rounded" style="flex:1 1 auto; height:11px; overflow:hidden;">
-              <div class="bg--gray-70" style="width:{{ stat.pct }}%; height:100%;"></div>
+              <div class="bg--gray-90" style="width:{{ stat.pct }}%; height:100%;"></div>
             </div>
             <span style="flex:0 0 34px; text-align:right; font-size:0.86rem; font-weight:700;">{{ stat.value }}</span>
           </div>
