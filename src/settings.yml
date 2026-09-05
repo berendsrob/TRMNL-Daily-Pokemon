@@ -30,6 +30,41 @@ oauth_token_field_name: ''
 oauth_expiry_field_name: ''
 oauth_expiry_strategy: ''
 oauth_fixed_expiry_ms: ''
+custom_fields:
+- keyname: language
+  field_type: select
+  name: Language
+  description: Language for labels and type names.
+  help_text: Pokemon names always stay in their original form. Dutch labels are translated, but the Pokedex category line stays English because PokeAPI has no Dutch data.
+  options:
+  - English: en
+  - Espa&ntilde;ol: es
+  - Fran&ccedil;ais: fr
+  - Nederlands: nl
+  default: en
+- keyname: generations
+  field_type: select
+  multiple: true
+  optional: true
+  name: Generations
+  description: Which generations to draw from.
+  help_text: Use <kbd>&#8984;</kbd>+<kbd>click</kbd> or <kbd>ctrl</kbd>+<kbd>click</kbd> to select multiple. Leave empty for the full National Dex (all 1025).
+  options:
+  - I &mdash; Kanto (1-151): 1
+  - II &mdash; Johto (152-251): 2
+  - III &mdash; Hoenn (252-386): 3
+  - IV &mdash; Sinnoh (387-493): 4
+  - V &mdash; Unova (494-649): 5
+  - VI &mdash; Kalos (650-721): 6
+  - VII &mdash; Alola (722-809): 7
+  - VIII &mdash; Galar (810-905): 8
+  - IX &mdash; Paldea (906-1025): 9
+- keyname: time_zone
+  field_type: time_zone
+  optional: true
+  name: Time Zone
+  description: When the Pokemon of the day rolls over.
+  help_text: Defaults to your TRMNL account time zone.
 name: My Plugin
-description:
-refresh_interval:
+description: ''
+refresh_interval: 15
