@@ -36,9 +36,6 @@ const I18N = {
     number: "No.",
     height: "Height",
     weight: "Weight",
-    total: "Total",
-    abilities: "Abilities",
-    hidden: "hidden",
     evolution: "Evolution chain",
     legendary: "Legendary",
     mythical: "Mythical",
@@ -50,9 +47,6 @@ const I18N = {
     number: "N.º",
     height: "Altura",
     weight: "Peso",
-    total: "Total",
-    abilities: "Habilidades",
-    hidden: "oculta",
     evolution: "Cadena evolutiva",
     legendary: "Legendario",
     mythical: "Singular",
@@ -64,9 +58,6 @@ const I18N = {
     number: "Nº",
     height: "Taille",
     weight: "Poids",
-    total: "Total",
-    abilities: "Talents",
-    hidden: "caché",
     evolution: "Chaîne d'évolution",
     legendary: "Légendaire",
     mythical: "Fabuleux",
@@ -78,9 +69,6 @@ const I18N = {
     number: "Nr.",
     height: "Lengte",
     weight: "Gewicht",
-    total: "Totaal",
-    abilities: "Vaardigheden",
-    hidden: "verborgen",
     evolution: "Evolutielijn",
     legendary: "Legendarisch",
     mythical: "Mythisch",
@@ -111,27 +99,6 @@ const TYPES = {
   dark:     { en: "Dark",     es: "Siniestro",  fr: "Ténèbres", nl: "Duister"    },
   fairy:    { en: "Fairy",    es: "Hada",       fr: "Fée",      nl: "Fee"        },
 };
-
-// Base stat labels. `short` is for the table header, where a column is only
-// wide enough for 2-3 characters.
-const STAT_KEYS = ["hp", "attack", "defense", "special-attack", "special-defense", "speed"];
-const STAT_LABELS = {
-  "hp":              { en: "HP",      es: "PS",       fr: "PV",       nl: "HP"       },
-  "attack":          { en: "Attack",  es: "Ataque",   fr: "Attaque",  nl: "Aanval"   },
-  "defense":         { en: "Defense", es: "Defensa",  fr: "Défense",  nl: "Verded."  },
-  "special-attack":  { en: "Sp. Atk", es: "At. Esp.", fr: "Att. Spé", nl: "Sp. Aanv" },
-  "special-defense": { en: "Sp. Def", es: "Df. Esp.", fr: "Déf. Spé", nl: "Sp. Verd" },
-  "speed":           { en: "Speed",   es: "Velocid.", fr: "Vitesse",  nl: "Snelheid" },
-};
-const STAT_SHORT = {
-  "hp":              { en: "HP",  es: "PS",  fr: "PV",  nl: "HP"  },
-  "attack":          { en: "ATK", es: "ATQ", fr: "ATQ", nl: "AAN" },
-  "defense":         { en: "DEF", es: "DEF", fr: "DÉF", nl: "VER" },
-  "special-attack":  { en: "SpA", es: "AtE", fr: "AtS", nl: "SpA" },
-  "special-defense": { en: "SpD", es: "DfE", fr: "DéS", nl: "SpV" },
-  "speed":           { en: "SPD", es: "VEL", fr: "VIT", nl: "SNL" },
-};
-const STAT_SCALE = 200; // retained for pct; unused by the table layout
 
 // --- config -----------------------------------------------------------------
 
@@ -256,6 +223,8 @@ function newestFlavor(entries, apiLang) {
 
 // Flatten the evolution tree into ordered stages. Branching lines
 // (Eevee, Wurmple) put every sibling in the same stage.
+// Each member gets both the 96px pixel sprite and the 475px official
+// artwork, so the template can pick based on how large it renders them.
 function flattenChain(root, currentSlug) {
   const levels = [];
   let level = [root];
@@ -267,6 +236,7 @@ function flattenChain(root, currentSlug) {
         name: pretty(n.species.name),
         id,
         sprite: id ? `${SPRITE}/${id}.png` : "",
+        art: id ? `${ART}/${id}.png` : "",
         current: n.species.name === currentSlug,
       };
     }));
@@ -311,22 +281,6 @@ async function run(input) {
     .sort((a, b) => a.slot - b.slot)
     .map((x) => (TYPES[x.type.name] && TYPES[x.type.name][lang]) || cap(x.type.name));
 
-  // Ability names come from the slug, not /ability/{name}. Fetching up to
-  // three more endpoints for localized names does not fit the 5s budget.
-  const abilities = mon.abilities
-    .sort((a, b) => a.slot - b.slot)
-    .map((a) => ({ name: pretty(a.ability.name), hidden: a.is_hidden }));
-
-  const rawStats = {};
-  for (const s of mon.stats) rawStats[s.stat.name] = s.base_stat;
-  const stats = STAT_KEYS.map((k) => ({
-    label: (STAT_LABELS[k] && STAT_LABELS[k][lang]) || k,
-    short: (STAT_SHORT[k] && STAT_SHORT[k][lang]) || k,
-    value: rawStats[k] || 0,
-    pct: Math.min(100, Math.round(((rawStats[k] || 0) / STAT_SCALE) * 100)),
-  }));
-  const stat_total = STAT_KEYS.reduce((a, k) => a + (rawStats[k] || 0), 0);
-
   const roman = { i: 1, ii: 2, iii: 3, iv: 4, v: 5, vi: 6, vii: 7, viii: 8, ix: 9 };
   const genNum = roman[species.generation.name.replace("generation-", "")] || 0;
   const meta = GENERATIONS[genNum] || {};
@@ -346,24 +300,4 @@ async function run(input) {
     flavor: newestFlavor(species.flavor_text_entries, t.api),
     genus_is_english: t.api === "en" && lang !== "en",
     artwork: `${ART}/${dex}.png`,
-    types: types.join(" / "),
-    type_1: types[0] || "",
-    type_2: types[1] || "",
-    height_m: (mon.height / 10).toFixed(1),
-    weight_kg: (mon.weight / 10).toFixed(1),
-    region: meta.region || "",
-    generation_label: meta.region ? `Gen ${genNum} · ${meta.region}` : `Gen ${genNum}`,
-    is_legendary: species.is_legendary,
-    is_mythical: species.is_mythical,
-    // abilities + stats
-    abilities,
-    stats,
-    stat_total,
-    // evolution chain
-    stages,
-    has_evolution: stages.length > 1,
-    // diagnostics
-    pool_size: pool.length,
-    generations_active: gens.join(","),
-  };
-}
+    types:
