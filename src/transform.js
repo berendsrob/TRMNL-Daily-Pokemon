@@ -300,4 +300,20 @@ async function run(input) {
     flavor: newestFlavor(species.flavor_text_entries, t.api),
     genus_is_english: t.api === "en" && lang !== "en",
     artwork: `${ART}/${dex}.png`,
-    types:
+    types: types.join(" / "),
+    type_1: types[0] || "",
+    type_2: types[1] || "",
+    height_m: (mon.height / 10).toFixed(1),
+    weight_kg: (mon.weight / 10).toFixed(1),
+    region: meta.region || "",
+    generation_label: meta.region ? `Gen ${genNum} · ${meta.region}` : `Gen ${genNum}`,
+    is_legendary: species.is_legendary,
+    is_mythical: species.is_mythical,
+    // evolution chain
+    stages,
+    has_evolution: stages.length > 1,
+    // diagnostics
+    pool_size: pool.length,
+    generations_active: gens.join(","),
+  };
+}
