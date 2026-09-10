@@ -1,36 +1,51 @@
-<div class="view">
-  <div class="layout">
-    <div class="flex flex--row flex--center-y gap--large h--full">
+{% comment %}
+  Pokemon of the Day - Half horizontal. Hero + name, types, height, weight.
+{% endcomment %}
 
-      <div class="flex flex--col flex--center-x flex--center-y" style="flex:0 0 34%; height:100%;">
-        <img class="image image--contain w--full" src="{{ artwork }}" style="height:100%;" />
+<div class="view view--half_horizontal">
+  <div class="layout">
+
+    <div style="display:flex; height:100%; gap:20px; align-items:center;">
+
+      <div style="flex:0 0 34%; height:100%; display:flex; align-items:center; justify-content:center;">
+        <img class="image" src="{{ artwork }}"
+             style="width:100%; height:100%; object-fit:contain;" />
       </div>
 
-      <div class="flex flex--col gap--xsmall" style="flex:1 1 auto; min-width:0;">
-        <span class="value value--small">{{ name }}</span>
-        <div class="flex flex--row gap--xsmall">
-          <span class="outline label px--medium">{{ type_1 | upcase }}</span>
+      <div style="flex:1 1 auto; min-width:0;">
+
+        <span class="value value--small" style="display:block; line-height:1.05;">
+          {{ name }}
+        </span>
+
+        <span class="text--gray-40" style="display:block; margin-top:3px; font-size:0.78rem;">
+          {{ t.number }} {{ dex_padded }} &middot; {{ generation_label }}
+        </span>
+
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+          <span class="outline" style="padding:4px 16px; font-weight:700; font-size:0.95rem;">
+            {{ type_1 | upcase }}
+          </span>
           {% if type_2 != "" %}
-          <span class="outline label px--medium">{{ type_2 | upcase }}</span>
+          <span class="outline" style="padding:4px 16px; font-weight:700; font-size:0.95rem;">
+            {{ type_2 | upcase }}
+          </span>
           {% endif %}
         </div>
-        <div class="flex flex--row gap--large">
-          <div class="flex flex--col">
-            <span class="label text--gray-40">{{ t.height }}</span>
-            <span class="value value--xsmall value--tnums">{{ height_m }} m</span>
+
+        <div style="display:flex; margin-top:12px; gap:32px;">
+          <div>
+            <span class="text--gray-40" style="display:block; font-size:0.78rem;">{{ t.height }}</span>
+            <span style="font-size:1.8rem; font-weight:700; line-height:1;">{{ height_m }}<span style="font-size:0.95rem;"> m</span></span>
           </div>
-          <div class="flex flex--col">
-            <span class="label text--gray-40">{{ t.weight }}</span>
-            <span class="value value--xsmall value--tnums">{{ weight_kg }} kg</span>
+          <div>
+            <span class="text--gray-40" style="display:block; font-size:0.78rem;">{{ t.weight }}</span>
+            <span style="font-size:1.8rem; font-weight:700; line-height:1;">{{ weight_kg }}<span style="font-size:0.95rem;"> kg</span></span>
           </div>
         </div>
+
       </div>
-
     </div>
-  </div>
 
-  <div class="title_bar">
-    <span class="title">{{ t.title }}</span>
-    <span class="instance">{{ t.number }} {{ dex_padded }}</span>
   </div>
 </div>

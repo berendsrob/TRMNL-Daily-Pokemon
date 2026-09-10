@@ -1,12 +1,22 @@
-<div class="view">
-  <div class="layout">
-    <div class="flex flex--col flex--center-x gap--xsmall h--full">
-      <img class="image image--contain w--full" src="{{ artwork }}" style="flex:1 1 auto; min-height:0;" />
-      <span class="value value--xsmall text--center" style="flex:0 0 auto;">{{ name }}</span>
-    </div>
-  </div>
+{% comment %}
+  Pokemon of the Day - Quadrant. Image and name only.
+{% endcomment %}
 
-  <div class="title_bar">
-    <span class="title">{{ t.title }}</span>
+<div class="view view--quadrant">
+  <div class="layout">
+
+    <div style="display:flex; flex-direction:column; height:100%; gap:6px; align-items:center;">
+
+      <div style="flex:1 1 auto; min-height:0; width:100%; display:flex; align-items:center; justify-content:center;">
+        <img class="image" src="{{ artwork }}"
+             style="width:100%; height:100%; object-fit:contain;" />
+      </div>
+
+      <span class="value value--xsmall" style="flex:0 0 auto; line-height:1.05; text-align:center;">
+        {{ name }}
+      </span>
+
+    </div>
+
   </div>
 </div>

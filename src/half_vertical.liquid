@@ -1,34 +1,51 @@
-<div class="view">
+{% comment %}
+  Pokemon of the Day - Half vertical. Hero on top, key data below.
+{% endcomment %}
+
+<div class="view view--half_vertical">
   <div class="layout">
-    <div class="flex flex--col flex--center-x gap--small h--full">
 
-      <img class="image image--contain w--full" src="{{ artwork }}" style="flex:1 1 auto; min-height:0;" />
+    <div style="display:flex; flex-direction:column; height:100%; gap:10px; align-items:center;">
 
-      <div class="flex flex--col flex--center-x gap--xsmall" style="flex:0 0 auto;">
-        <span class="value value--small text--center">{{ name }}</span>
-        <div class="flex flex--row flex--center-x gap--xsmall">
-          <span class="outline label px--medium">{{ type_1 | upcase }}</span>
-          {% if type_2 != "" %}
-          <span class="outline label px--medium">{{ type_2 | upcase }}</span>
-          {% endif %}
-        </div>
-        <div class="flex flex--row flex--center-x gap--large">
-          <div class="flex flex--col flex--center-x">
-            <span class="label text--gray-40">{{ t.height }}</span>
-            <span class="value value--xsmall value--tnums">{{ height_m }} m</span>
-          </div>
-          <div class="flex flex--col flex--center-x">
-            <span class="label text--gray-40">{{ t.weight }}</span>
-            <span class="value value--xsmall value--tnums">{{ weight_kg }} kg</span>
-          </div>
-        </div>
+      <div style="flex:1 1 auto; min-height:0; width:100%; display:flex; align-items:center; justify-content:center;">
+        <img class="image" src="{{ artwork }}"
+             style="width:100%; height:100%; object-fit:contain;" />
       </div>
 
-    </div>
-  </div>
+      <div style="flex:0 0 auto; width:100%;">
 
-  <div class="title_bar">
-    <span class="title">{{ t.title }}</span>
-    <span class="instance">{{ t.number }} {{ dex_padded }}</span>
+        <span class="value value--small" style="display:block; line-height:1.05; text-align:center;">
+          {{ name }}
+        </span>
+
+        <span class="text--gray-40" style="display:block; margin-top:3px; font-size:0.78rem; text-align:center;">
+          {{ t.number }} {{ dex_padded }} &middot; {{ generation_label }}
+        </span>
+
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:10px;">
+          <span class="outline" style="padding:4px 16px; font-weight:700; font-size:0.95rem;">
+            {{ type_1 | upcase }}
+          </span>
+          {% if type_2 != "" %}
+          <span class="outline" style="padding:4px 16px; font-weight:700; font-size:0.95rem;">
+            {{ type_2 | upcase }}
+          </span>
+          {% endif %}
+        </div>
+
+        <div style="display:flex; justify-content:center; margin-top:12px; gap:32px;">
+          <div style="text-align:center;">
+            <span class="text--gray-40" style="display:block; font-size:0.78rem;">{{ t.height }}</span>
+            <span style="font-size:1.8rem; font-weight:700; line-height:1;">{{ height_m }}<span style="font-size:0.95rem;"> m</span></span>
+          </div>
+          <div style="text-align:center;">
+            <span class="text--gray-40" style="display:block; font-size:0.78rem;">{{ t.weight }}</span>
+            <span style="font-size:1.8rem; font-weight:700; line-height:1;">{{ weight_kg }}<span style="font-size:0.95rem;"> kg</span></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </div>
