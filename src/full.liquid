@@ -1,21 +1,24 @@
 {% comment %}
   Pokemon of the Day - Full layout, tuned for TRMNL X (4-bit greyscale).
-  Two bands: hero + details on top, full-width evolution chain below.
+  Bottom band shows relatives only; the daily Pokemon is the hero image.
 {% endcomment %}
 
 <div class="view view--full">
   <div class="layout">
 
-    <div style="display:flex; flex-direction:column; height:100%; gap:16px;">
+    <div style="display:flex; flex-direction:column; height:100%; gap:14px;">
 
       <!-- Top band: hero + details -->
-      <div style="flex:1 1 auto; min-height:0; display:flex; gap:26px; align-items:center;">
+      <div style="flex:1 1 auto; min-height:0; display:flex; gap:28px; align-items:center;">
 
-        <div style="flex:0 0 40%; display:flex; flex-direction:column; align-items:center; gap:6px;">
+        <div style="flex:0 0 52%; height:100%; display:flex; flex-direction:column;
+                    align-items:center; justify-content:center; gap:6px;">
           <img class="image"
                src="{{ artwork }}"
-               style="width:100%; max-height:100%; object-fit:contain;" />
-          <span class="text--gray-40" style="font-size:0.82rem;">{{ t.number }} {{ dex_padded }}</span>
+               style="width:100%; height:100%; object-fit:contain;" />
+          <span class="text--gray-40" style="flex:0 0 auto; font-size:0.9rem;">
+            {{ t.number }} {{ dex_padded }}
+          </span>
         </div>
 
         <div style="flex:1 1 auto; min-width:0;">
@@ -24,7 +27,7 @@
             {{ name }}
           </span>
 
-          <span class="text--gray-40" style="display:block; margin-top:5px; font-size:0.86rem;">
+          <span class="text--gray-40" style="display:block; margin-top:5px; font-size:0.88rem;">
             {{ genus }} &middot; {{ generation_label }}{% if is_legendary %} &middot; {{ t.legendary }}{% endif %}{% if is_mythical %} &middot; {{ t.mythical }}{% endif %}
           </span>
 
@@ -40,7 +43,7 @@
           </div>
 
           {% if flavor != "" %}
-          <p style="margin:16px 0 0 0; font-size:0.92rem; line-height:1.35;
+          <p style="margin:16px 0 0 0; font-size:0.94rem; line-height:1.35;
                     display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
             {{ flavor }}
           </p>
@@ -62,24 +65,23 @@
         </div>
       </div>
 
-      <!-- Bottom band: full-width evolution chain -->
+      <!-- Bottom band: relatives in the evolution line -->
       {% if has_evolution %}
       <div style="flex:0 0 auto;">
         <div class="border--h-25" style="height:2px; margin-bottom:8px;"></div>
-        <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
-          {% for stage in stages %}
+        <div style="display:flex; align-items:center; justify-content:center; gap:14px;">
+          {% for stage in others %}
             {% if forloop.index0 > 0 %}
-              <span class="text--gray-40" style="flex:0 0 auto; font-size:2rem;">&rarr;</span>
+              <span class="text--gray-40" style="flex:0 0 auto; font-size:1.8rem;">&rarr;</span>
             {% endif %}
             {% for m in stage.members %}
-            <div style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center;">
+            <div style="flex:1 1 0; min-width:0; max-width:210px;
+                        display:flex; flex-direction:column; align-items:center;">
               {% if m.art != "" %}
               <img class="image" src="{{ m.art }}"
-                   style="width:100%; max-height:250px; object-fit:contain;
-                          {% if m.current %}{% else %}opacity:0.5;{% endif %}" />
+                   style="width:100%; max-height:180px; object-fit:contain;" />
               {% endif %}
-              <span style="font-size:1.05rem; line-height:1.15; text-align:center;
-                           {% if m.current %}font-weight:700;{% else %}opacity:0.65;{% endif %}">
+              <span style="font-size:1.05rem; line-height:1.15; text-align:center;">
                 {{ m.name }}
               </span>
             </div>
@@ -89,16 +91,6 @@
       </div>
       {% endif %}
 
-      <!-- Fallback when the chain has a single stage -->
-      {% unless has_evolution %}
-      <div style="flex:0 0 auto;"></div>
-      {% endunless %}
-
     </div>
-  </div>
-
-  <div class="title_bar">
-    <span class="title">{{ t.title }}</span>
-    <span class="instance">{{ date }}</span>
   </div>
 </div>
