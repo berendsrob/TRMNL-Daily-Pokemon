@@ -66,6 +66,10 @@ custom_fields:
   name: Time Zone
   description: When the Pokemon of the day rolls over.
   help_text: Defaults to your TRMNL account time zone.
+- keyname: author_bio
+  field_type: author_bio
+  name: About
+  description: Built by <a href="https://www.justrob.nl">JustRob</a>. Pokemon data courtesy of <a href="https://pokeapi.co">PokeAPI</a>. Found a bug or want a language added, get in touch.
 name: Daily Pokemon
 description: Shows a random pokemon every day
 refresh_interval: 240
