@@ -1,0 +1,36 @@
+<div class="view">
+  <div class="layout">
+    <div class="flex flex--row flex--center-y gap--large h--full">
+
+      <div class="flex flex--col flex--center-x flex--center-y" style="flex:0 0 34%; height:100%;">
+        <img class="image image--contain w--full" src="{{ artwork }}" style="height:100%;" />
+      </div>
+
+      <div class="flex flex--col gap--xsmall" style="flex:1 1 auto; min-width:0;">
+        <span class="value value--small">{{ name }}</span>
+        <div class="flex flex--row gap--xsmall">
+          <span class="outline label px--medium">{{ type_1 | upcase }}</span>
+          {% if type_2 != "" %}
+          <span class="outline label px--medium">{{ type_2 | upcase }}</span>
+          {% endif %}
+        </div>
+        <div class="flex flex--row gap--large">
+          <div class="flex flex--col">
+            <span class="label text--gray-40">{{ t.height }}</span>
+            <span class="value value--xsmall value--tnums">{{ height_m }} m</span>
+          </div>
+          <div class="flex flex--col">
+            <span class="label text--gray-40">{{ t.weight }}</span>
+            <span class="value value--xsmall value--tnums">{{ weight_kg }} kg</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="title_bar">
+    <span class="title">{{ t.title }}</span>
+    <span class="instance">{{ t.number }} {{ dex_padded }}</span>
+  </div>
+</div>

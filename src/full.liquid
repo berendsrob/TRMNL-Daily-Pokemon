@@ -1,106 +1,80 @@
-{% comment %}
-  Pokemon of the Day - Full layout, tuned for TRMNL X (4-bit greyscale).
-  Bottom band shows relatives; the daily Pokemon appears as an up-arrow marker.
-{% endcomment %}
+<div class="view">
+  <div class="layout layout--col gap--medium">
 
-<div class="view view--full">
-  <div class="layout">
+    <div class="flex flex--row flex--center-y gap--xlarge" style="flex:1 1 auto; min-height:0;">
 
-    <div style="display:flex; flex-direction:column; height:100%; gap:14px;">
+      <div class="flex flex--col flex--center-x flex--center-y gap--xsmall" style="flex:0 0 52%; height:100%;">
+        <img class="image image--contain w--full" src="{{ artwork }}" style="height:100%;" />
+        <span class="label text--gray-40">{{ t.number }} {{ dex_padded }}</span>
+      </div>
 
-      <!-- Top band: hero + details -->
-      <div style="flex:1 1 auto; min-height:0; display:flex; gap:28px; align-items:center;">
+      <div class="flex flex--col gap--small" style="flex:1 1 auto; min-width:0;">
 
-        <div style="flex:0 0 52%; height:100%; display:flex; flex-direction:column;
-                    align-items:center; justify-content:center; gap:6px;">
-          <img class="image"
-               src="{{ artwork }}"
-               style="width:100%; height:100%; object-fit:contain;" />
-          <span class="text--gray-40" style="flex:0 0 auto; font-size:0.9rem;">
-            {{ t.number }} {{ dex_padded }}
-          </span>
-        </div>
+        <span class="value value--large">{{ name }}</span>
 
-        <div style="flex:1 1 auto; min-width:0;">
+        <span class="description text--gray-40">
+          {{ genus }} &middot; {{ generation_label }}{% if is_legendary %} &middot; {{ t.legendary }}{% endif %}{% if is_mythical %} &middot; {{ t.mythical }}{% endif %}
+        </span>
 
-          <span class="value value--large" style="display:block; line-height:1.05;">
-            {{ name }}
-          </span>
-
-          <span class="text--gray-40" style="display:block; margin-top:5px; font-size:0.88rem;">
-            {{ genus }} &middot; {{ generation_label }}{% if is_legendary %} &middot; {{ t.legendary }}{% endif %}{% if is_mythical %} &middot; {{ t.mythical }}{% endif %}
-          </span>
-
-          <div style="display:flex; justify-content:flex-start; flex-wrap:wrap; gap:10px; margin-top:16px;">
-            <span class="outline" style="padding:7px 26px; font-weight:700; font-size:1.35rem;">
-              {{ type_1 | upcase }}
-            </span>
-            {% if type_2 != "" %}
-            <span class="outline" style="padding:7px 26px; font-weight:700; font-size:1.35rem;">
-              {{ type_2 | upcase }}
-            </span>
-            {% endif %}
-          </div>
-
-          {% if flavor != "" %}
-          <p style="margin:16px 0 0 0; font-size:0.94rem; line-height:1.35;
-                    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
-            {{ flavor }}
-          </p>
+        <div class="flex flex--row gap--small">
+          <span class="outline value value--xsmall px--large py--xsmall">{{ type_1 | upcase }}</span>
+          {% if type_2 != "" %}
+          <span class="outline value value--xsmall px--large py--xsmall">{{ type_2 | upcase }}</span>
           {% endif %}
+        </div>
 
-          <div class="border--h-25" style="height:2px; margin-top:18px;"></div>
+        {% if flavor != "" %}
+        <span class="description" data-clamp="3">{{ flavor }}</span>
+        {% endif %}
 
-          <div style="display:flex; margin-top:16px; gap:48px;">
-            <div>
-              <span class="text--gray-40" style="display:block; font-size:1rem;">{{ t.height }}</span>
-              <span style="font-size:3rem; font-weight:700; line-height:1;">{{ height_m }}<span style="font-size:1.5rem;"> m</span></span>
-            </div>
-            <div>
-              <span class="text--gray-40" style="display:block; font-size:1rem;">{{ t.weight }}</span>
-              <span style="font-size:3rem; font-weight:700; line-height:1;">{{ weight_kg }}<span style="font-size:1.5rem;"> kg</span></span>
-            </div>
+        <div class="border--h-25" style="height:2px;"></div>
+
+        <div class="flex flex--row gap--xxlarge">
+          <div class="flex flex--col">
+            <span class="label text--gray-40">{{ t.height }}</span>
+            <span class="value value--large value--tnums">{{ height_m }} m</span>
           </div>
-
+          <div class="flex flex--col">
+            <span class="label text--gray-40">{{ t.weight }}</span>
+            <span class="value value--large value--tnums">{{ weight_kg }} kg</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Bottom band: evolution line, current Pokemon shown as a marker -->
-      {% if has_evolution %}
-      <div style="flex:0 0 auto;">
-        <div class="border--h-25" style="height:2px; margin-bottom:8px;"></div>
-        <div style="display:flex; align-items:center; justify-content:center; gap:14px;">
-          {% for stage in others %}
-            {% if forloop.index0 > 0 %}
-              <span class="text--gray-40" style="flex:0 0 auto; font-size:1.8rem;">&rarr;</span>
-            {% endif %}
-            {% if stage.marker %}
-              <div style="flex:0 0 auto; display:flex; flex-direction:column;
-                          align-items:center; justify-content:center; padding:0 6px;">
-                <span style="font-size:2.6rem; line-height:1;">&uarr;</span>
-                <span class="text--gray-40" style="font-size:0.95rem; text-align:center;">
-                  {{ name }}
-                </span>
-              </div>
-            {% else %}
-              {% for m in stage.members %}
-              <div style="flex:1 1 0; min-width:0; max-width:210px;
-                          display:flex; flex-direction:column; align-items:center;">
-                {% if m.art != "" %}
-                <img class="image" src="{{ m.art }}"
-                     style="width:100%; max-height:180px; object-fit:contain;" />
-                {% endif %}
-                <span style="font-size:1.05rem; line-height:1.15; text-align:center;">
-                  {{ m.name }}
-                </span>
-              </div>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        </div>
       </div>
-      {% endif %}
-
     </div>
+
+    {% if has_evolution %}
+    <div class="flex flex--col gap--xsmall" style="flex:0 0 auto;">
+      <div class="border--h-25" style="height:2px;"></div>
+      <div class="flex flex--row flex--center-x flex--center-y gap--medium">
+        {% for stage in others %}
+          {% if forloop.index0 > 0 %}
+            <span class="value value--small text--gray-40">&rarr;</span>
+          {% endif %}
+          {% if stage.marker %}
+            <div class="flex flex--col flex--center-x flex--center-y">
+              <span class="value value--small">&uarr;</span>
+              <span class="label text--gray-40 text--center">{{ name }}</span>
+            </div>
+          {% else %}
+            {% for m in stage.members %}
+            <div class="flex flex--col flex--center-x" style="flex:1 1 0; min-width:0; max-width:210px;">
+              {% if m.art != "" %}
+              <img class="image image--contain w--full" src="{{ m.art }}" style="max-height:180px;" />
+              {% endif %}
+              <span class="label text--center">{{ m.name }}</span>
+            </div>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <div class="title_bar">
+    <span class="title">{{ t.title }}</span>
+    <span class="instance">{{ date }}</span>
   </div>
 </div>
