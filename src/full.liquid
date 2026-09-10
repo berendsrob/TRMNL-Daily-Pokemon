@@ -17,9 +17,9 @@
         </span>
 
         <div class="flex flex--row gap--small">
-          <span class="outline value value--xsmall px--large py--xsmall">{{ type_1 | upcase }}</span>
+          <span class="outline px--large py--xsmall" style="font-size:1.35rem; font-weight:700; letter-spacing:.06em;">{{ type_1 | upcase }}</span>
           {% if type_2 != "" %}
-          <span class="outline value value--xsmall px--large py--xsmall">{{ type_2 | upcase }}</span>
+          <span class="outline px--large py--xsmall" style="font-size:1.35rem; font-weight:700; letter-spacing:.06em;">{{ type_2 | upcase }}</span>
           {% endif %}
         </div>
 
@@ -31,12 +31,12 @@
 
         <div class="flex flex--row gap--xxlarge">
           <div class="flex flex--col">
-            <span class="label text--gray-40">{{ t.height }}</span>
-            <span class="value value--large value--tnums">{{ height_m }} m</span>
+            <span class="text--gray-40" style="font-size:1rem;">{{ t.height }}</span>
+            <span style="font-size:3rem; font-weight:700; line-height:1;">{{ height_m }}<span style="font-size:1.5rem;"> m</span></span>
           </div>
           <div class="flex flex--col">
-            <span class="label text--gray-40">{{ t.weight }}</span>
-            <span class="value value--large value--tnums">{{ weight_kg }} kg</span>
+            <span class="text--gray-40" style="font-size:1rem;">{{ t.weight }}</span>
+            <span style="font-size:3rem; font-weight:700; line-height:1;">{{ weight_kg }}<span style="font-size:1.5rem;"> kg</span></span>
           </div>
         </div>
 
@@ -49,12 +49,12 @@
       <div class="flex flex--row flex--center-x flex--center-y gap--medium">
         {% for stage in others %}
           {% if forloop.index0 > 0 %}
-            <span class="value value--small text--gray-40">&rarr;</span>
+            <span class="text--gray-40" style="font-size:1.8rem;">&rarr;</span>
           {% endif %}
           {% if stage.marker %}
             <div class="flex flex--col flex--center-x flex--center-y">
-              <span class="value value--small">&uarr;</span>
-              <span class="label text--gray-40 text--center">{{ name }}</span>
+              <span style="font-size:2.6rem; line-height:1;">&uarr;</span>
+              <span class="text--gray-40 text--center" style="font-size:0.95rem;">{{ name }}</span>
             </div>
           {% else %}
             {% for m in stage.members %}
@@ -62,7 +62,7 @@
               {% if m.art != "" %}
               <img class="image image--contain w--full" src="{{ m.art }}" style="max-height:180px;" />
               {% endif %}
-              <span class="label text--center">{{ m.name }}</span>
+              <span class="text--center" style="font-size:1.05rem; line-height:1.15;">{{ m.name }}</span>
             </div>
             {% endfor %}
           {% endif %}
@@ -71,10 +71,5 @@
     </div>
     {% endif %}
 
-  </div>
-
-  <div class="title_bar">
-    <span class="title">{{ t.title }}</span>
-    <span class="instance">{{ date }}</span>
   </div>
 </div>
