@@ -1,6 +1,6 @@
 {% comment %}
   Pokemon of the Day - Full layout, tuned for TRMNL X (4-bit greyscale).
-  Bottom band shows relatives only; the daily Pokemon is the hero image.
+  Bottom band shows relatives; the daily Pokemon appears as an up-arrow marker.
 {% endcomment %}
 
 <div class="view view--full">
@@ -65,7 +65,7 @@
         </div>
       </div>
 
-      <!-- Bottom band: relatives in the evolution line -->
+      <!-- Bottom band: evolution line, current Pokemon shown as a marker -->
       {% if has_evolution %}
       <div style="flex:0 0 auto;">
         <div class="border--h-25" style="height:2px; margin-bottom:8px;"></div>
@@ -74,18 +74,28 @@
             {% if forloop.index0 > 0 %}
               <span class="text--gray-40" style="flex:0 0 auto; font-size:1.8rem;">&rarr;</span>
             {% endif %}
-            {% for m in stage.members %}
-            <div style="flex:1 1 0; min-width:0; max-width:210px;
-                        display:flex; flex-direction:column; align-items:center;">
-              {% if m.art != "" %}
-              <img class="image" src="{{ m.art }}"
-                   style="width:100%; max-height:180px; object-fit:contain;" />
-              {% endif %}
-              <span style="font-size:1.05rem; line-height:1.15; text-align:center;">
-                {{ m.name }}
-              </span>
-            </div>
-            {% endfor %}
+            {% if stage.marker %}
+              <div style="flex:0 0 auto; display:flex; flex-direction:column;
+                          align-items:center; justify-content:center; padding:0 6px;">
+                <span style="font-size:2.6rem; line-height:1;">&uarr;</span>
+                <span class="text--gray-40" style="font-size:0.95rem; text-align:center;">
+                  {{ name }}
+                </span>
+              </div>
+            {% else %}
+              {% for m in stage.members %}
+              <div style="flex:1 1 0; min-width:0; max-width:210px;
+                          display:flex; flex-direction:column; align-items:center;">
+                {% if m.art != "" %}
+                <img class="image" src="{{ m.art }}"
+                     style="width:100%; max-height:180px; object-fit:contain;" />
+                {% endif %}
+                <span style="font-size:1.05rem; line-height:1.15; text-align:center;">
+                  {{ m.name }}
+                </span>
+              </div>
+              {% endfor %}
+            {% endif %}
           {% endfor %}
         </div>
       </div>
